@@ -169,22 +169,40 @@ For this test version, I chose to store images locally on the server (in the `ap
     ```
 
 3.  **Backend Setup (`api/`):**
-    *   Navigate to the API directory: `cd api`
-    *   Install dependencies: `npm install`
-    *   Create a `.env` file by copying `.env.example` (if it exists) or by creating a new one. Configure at least:
-        *   `DATABASE_URL="mongodb+srv://<user>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority"` (Your MongoDB connection string)
-        *   `JWT_SECRET="your_strong_jwt_secret"`
-    *   Apply database migrations: `npx prisma migrate dev`
-    *   (Optional) Seed database: `npx prisma db seed` (if a seed script is configured in `package.json` and `prisma/seed.js` exists)
-    *   Start the backend server: `npm run dev` (for development with Nodemon) or `npm start` (for production).
+    ```powershell
+    cd api
+    npm install
+    # Instale o Prisma CLI localmente, caso não esteja instalado
+    npm install --save-dev prisma
+    # Instale o client do Prisma (obrigatório)
+    npm install @prisma/client
+    # Copie o arquivo de ambiente, se existir
+    copy .env.example .env  # Ou crie manualmente o .env
+    # Edite o .env e configure:
+    # DATABASE_URL="mongodb+srv://<user>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority"
+    # JWT_SECRET="sua_senha_forte_jwt"
+    # Gere o Prisma Client
+    npx prisma generate
+    # (Opcional) Rode as migrações do banco de dados
+    npx prisma migrate dev
+    # (Opcional) Popule o banco, se existir seed
+    npx prisma db seed
+    # Inicie o servidor backend (modo desenvolvimento)
+    npm run dev
+    # Ou para produção
+    npm start
+    ```
 
 4.  **Frontend Setup (`client/`):**
-    *   The frontend consists of static HTML, CSS, and JS files.
-    *   If there are any client-side build steps or dependencies managed via `client/package.json` (e.g., for TailwindCSS compilation or JS bundling):
-        *   Navigate to the client directory: `cd client` (from the root, or `cd ../client` if you are in `api/`)
-        *   Install dependencies: `npm install`
-        *   Run any build script: `npm run build` (if applicable)
-    *   To view the frontend, open the `client/public/index.html` file directly in your web browser, or serve the `client/public/` directory using a simple HTTP server (e.g., `npx serve client/public` or using the Live Server extension in VS Code).
+    ```powershell
+    cd ../client
+    npm install  # Se houver dependências
+    # (Opcional) Rode o build, se necessário
+    npm run build
+    # Para visualizar, abra o arquivo client/public/index.html no navegador
+    # Ou rode um servidor local:
+    npx serve public
+    ```
 
 ---
 

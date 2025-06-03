@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Edit - Estate App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>/*All the alinments design/visual final review were performed with help of various AI to find various problems throughout the development */
+        :root {
+            --primary-color: #3b82f6; /* Main blue */
+            --secondary-color: #1e293b; /* Dark background */
+            --accent-color: #2563eb; /* Accent blue */
+            --border-radius: 24px;
+            --card-bg: #1e293b; /* Card background */
+            --text-primary: #e2e8f0; /* Main text */
+            --text-secondary: #94a3b8; /* Secondary text */
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a; /* Dark background */
+            color: var(--text-primary);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-radius: 12px;
+            padding: 12px 24px;
+            transition: all 0.2s ease;
+            color: white; /* Ensure text is white */
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger { /* Style for Cancel button */
+            background-color: rgba(239, 68, 68, 0.1); /* Light red background */
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: #f87171; /* Red text */
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444; /* Darker red text on hover */
+        }
+
+
+        .form-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        .renovation-tier {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .renovation-tier.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .renovation-tier.minimum {
+            border-left: 4px solid #10b981;
+        }
+
+        .renovation-tier.low {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .renovation-tier.medium {
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .renovation-tier.high {
+            border-left: 4px solid #ef4444;
+        }
+
+        .bottom-nav {
+            background: var(--card-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            color: var(--text-secondary);
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        select,
+        select option {
+            background-color: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        /* Image preview styles */
+        #property-image-preview .image-container {
+            position: relative;
+            width: 6rem; /* w-24 */
+            height: 6rem; /* h-24 */
+        }
+        #property-image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.375rem; /* rounded */
+        }
+        #property-image-preview .remove-image-btn {
+            position: absolute;
+            top: -0.25rem;
+            right: -0.25rem;
+            background-color: #ef4444; /* bg-red-500 */
+            color: white;
+            border-radius: 9999px; /* rounded-full */
+            width: 1.25rem; /* w-5 */
+            height: 1.25rem; /* h-5 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem; /* text-xs */
+            cursor: pointer;
+            border: none;
+            line-height: 1;
+        }
+    </style>
+    <!-- Leaflet JS Map Library -->
+    <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+</head>
+<body class="pb-20">
+    <!-- Header -->
+    <header class="header-gradient text-white pt-6 pb-8 px-6 mb-8 sticky top-0 z-20">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center">
+                <a href="#" id="back-link" class="flex items-center"> <!-- Back link will be set by JS -->
+                    <i class="fas fa-arrow-left text-white mr-3"></i>
+                    <h1 class="text-xl font-bold">Listing Edit</h1>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content - Two-column Layout -->
+    <main class="container mx-auto px-4 mb-20">
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Left side: Form -->
+            <div class="lg:w-2/3">
+                <form id="edit-listing-form" class="space-y-6">
+                    <!-- Basic Info Section -->
+                    <section class="card p-4">
+                        <h2 class="text-lg font-bold mb-4">Basic Information</h2>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-400 mb-2" for="title">Property Title</label>
+                            <input type="text" id="title" name="title" class="form-input" placeholder="e.g. Modern Apartment in Downtown" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-400 mb-2" for="description">Description</label>
+                            <textarea id="description" name="description" class="form-input" rows="3" placeholder="Describe your property" required></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="price">Price (€)</label>
+                                <input type="number" id="price" name="price" class="form-input" placeholder="e.g. 450000" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="propertyType">Property Type</label>
+                                <select id="propertyType" name="propertyType" class="form-input" required>
+                                    <option value="">Select Property Type</option>
+                                    <option value="T1">T1</option>
+                                    <option value="T2">T2</option>
+                                    <option value="T3">T3</option>
+                                    <option value="T4">T4</option>
+                                    <option value="T5">T5</option>
+                                    <option value="T6">T6+</option>
+                                    <option value="Studio">Studio</option>
+                                    <option value="Moradia">House</option>
+                                    <option value="Terreno">Land</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="bedroom">Bedrooms</label>
+                                <input type="number" id="bedroom" name="bedroom" class="form-input" placeholder="e.g. 3" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="bathroom">Bathrooms</label>
+                                <input type="number" id="bathroom" name="bathroom" step="0.5" class="form-input" placeholder="e.g. 2.5" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="garages">Garages</label>
+                                <input type="number" id="garages" name="garages" class="form-input" placeholder="e.g. 1" min="0">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="areaUtil">Usable Area (m²)</label>
+                                <input type="number" id="areaUtil" name="area" class="form-input" placeholder="e.g. 120" required>
+                                <small class="text-gray-500">Internal usable area of the property</small>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="areaBruta">Gross Area (m²)</label>
+                                <input type="number" id="areaBruta" name="areaBruta" class="form-input" placeholder="e.g. 150">
+                                <small class="text-gray-500">Total area including walls and technical areas</small>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Location Section -->
+                    <section class="card p-4">
+                        <h2 class="text-lg font-bold mb-4">Location</h2>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-400 mb-2" for="address">Address</label>
+                            <input type="text" id="address" name="address" class="form-input" placeholder="e.g., Av. da Liberdade, 120" required>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="city">City</label>
+                                <input type="text" id="city" name="city" class="form-input" placeholder="e.g., Lisbon" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="district">District</label>
+                                <select id="district" name="district" class="form-input">
+                                    <option value="">Select</option>
+                                    <option value="Lisboa">Lisboa</option>
+                                    <option value="Porto">Porto</option>
+                                    <option value="Braga">Braga</option>
+                                    <option value="Aveiro">Aveiro</option>
+                                    <option value="Setúbal">Setúbal</option>
+                                    <option value="Faro">Faro</option>
+                                    <option value="Coimbra">Coimbra</option>
+                                    <option value="Leiria">Leiria</option>
+                                    <option value="Santarém">Santarém</option>
+                                    <option value="Viseu">Viseu</option>
+                                    <option value="Viana do Castelo">Viana do Castelo</option>
+                                    <option value="Vila Real">Vila Real</option>
+                                    <option value="Bragança">Bragança</option>
+                                    <option value="Castelo Branco">Castelo Branco</option>
+                                    <option value="Guarda">Guarda</option>
+                                    <option value="Évora">Évora</option>
+                                    <option value="Beja">Beja</option>
+                                    <option value="Portalegre">Portalegre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="postalCode">Postal Code</label>
+                                <input type="text" id="postalCode" name="postalCode" class="form-input" placeholder="e.g., 1000-001">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="parish">Parish</label>
+                                <input type="text" id="parish" name="parish" class="form-input" placeholder="e.g., São Domingos de Benfica">
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-gray-400 mb-2">Select the exact location on the map</label>
+                            <div id="location-map" style="height: 300px; border-radius: 12px; margin-bottom: 10px;"></div>
+
+                            <div class="flex items-center mt-2 mb-4">
+                                <label class="text-gray-400 mr-2">Precision:</label>
+                                <div class="flex items-center space-x-1">
+                                    <input type="range" id="radius-slider" min="10" max="500" value="100" class="form-input w-full" style="padding: 0;">
+                                    <span id="radius-value" class="text-gray-400">100m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="latitude">Latitude</label>
+                                <input type="text" id="latitude" name="latitude" class="form-input" placeholder="e.g. 38.7223">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2" for="longitude">Longitude</label>
+                                <input type="text" id="longitude" name="longitude" class="form-input" placeholder="e.g. -9.1393">
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-4">
+                            <button type="button" class="btn-secondary" id="get-location">
+                                <i class="fas fa-map-marker-alt mr-2"></i> Get Current Location
+                            </button>
+
+                            <button type="button" class="btn-secondary" id="search-location">
+                                <i class="fas fa-search mr-2"></i> Search Address
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Property Images Section -->
+                    <section class="card p-4">
+                        <h2 class="text-lg font-bold mb-4">Property Photos</h2>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-400 mb-2">Current Photos</label>
+                            <div id="property-image-preview" class="flex flex-wrap gap-2 mt-2">
+                                <!-- Existing images will be loaded here by JS -->
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2">Click on the '×' to remove an image. Upload new images below to replace them.</p>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label class="block text-gray-400 mb-2">Upload New Photos (optional, replaces current ones)</label>
+                            <div class="border-2 border-dashed border-gray-500 p-4 rounded-lg text-center">
+                                <input type="file" id="property-photos" multiple accept="image/*" class="hidden">
+                                <label for="property-photos" class="cursor-pointer flex flex-col items-center justify-center">
+                                    <i class="fas fa-cloud-upload-alt text-gray-400 text-4xl mb-2"></i>
+                                    <span class="text-gray-500">Click to upload new photos</span>
+                                    <span class="text-gray-400 text-sm mt-1">JPG, PNG or WEBP (max. 5MB each, max. 10 photos)</span>
+                                </label>
+                            </div>
+                            <div id="new-property-image-preview" class="flex flex-wrap gap-2 mt-4">
+                                <!-- New image previews will appear here -->
+                            </div>
+                        </div>
+
+                        <div id="upload-status" class="hidden mt-2 p-2 rounded">
+                            <div class="flex items-center">
+                                <span id="upload-message" class="flex-grow"></span>
+                                <div id="upload-spinner" class="hidden animate-spin rounded-full h-4 w-4 border-t-2 border-blue-500"></div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="existing-images" name="existing_images" value="[]"> <!-- Store initial image URLs -->
+                        <input type="hidden" id="images-to-keep" name="images_to_keep" value="[]"> <!-- Store URLs of images to keep after removal -->
+
+                    </section>
+
+                    <!-- Renovation Options Section (Identical to new_listing.html) -->
+                    <section class="card p-4">
+                        <h2 class="text-lg font-bold mb-4">Renovation Options</h2>
+                        <p class="text-gray-500 mb-4">Add renovation tiers to show potential buyers different possibilities.</p>
+
+                        <!-- Minimum Habitable Tier -->
+                        <div class="renovation-tier minimum p-4 mb-4" id="minimum-tier">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold">Minimum Habitable</h3>
+                                <div class="flex items-center">
+                                    <span class="text-gray-400 mr-2">Include</span>
+                                    <input type="checkbox" id="minimum-enabled" name="minimum_enabled" class="tier-checkbox w-5 h-5">
+                                </div>
+                            </div>
+                            <div class="tier-content hidden space-y-3">
+                                <p class="text-gray-500">Basic renovations to make the property livable.</p>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="minimum-cost">Estimated Cost (€)</label>
+                                    <input type="number" id="minimum-cost" name="minimum_cost" class="form-input" placeholder="e.g. 15000">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="minimum-description">Description</label>
+                                    <textarea id="minimum-description" name="minimum_description" class="form-input" rows="2" placeholder="Describe the minimum necessary renovations"></textarea>
+                                </div>
+                                <!-- Image upload for tier (optional, add if needed) -->
+                            </div>
+                        </div>
+
+                        <!-- Low Budget Tier -->
+                         <div class="renovation-tier low p-4 mb-4" id="low-tier">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold">Low Budget</h3>
+                                <div class="flex items-center">
+                                    <span class="text-gray-400 mr-2">Include</span>
+                                    <input type="checkbox" id="low-enabled" name="low_enabled" class="tier-checkbox w-5 h-5">
+                                </div>
+                            </div>
+                            <div class="tier-content hidden space-y-3">
+                                <p class="text-gray-500">Affordable renovations with basic improvements.</p>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="low-cost">Estimated Cost (€)</label>
+                                    <input type="number" id="low-cost" name="low_cost" class="form-input" placeholder="e.g. 30000">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="low-description">Description</label>
+                                    <textarea id="low-description" name="low_description" class="form-input" rows="2" placeholder="Describe the low budget renovations"></textarea>
+                                </div>
+                                <!-- Image upload for tier (optional, add if needed) -->
+                            </div>
+                        </div>
+
+                        <!-- Medium Budget Tier -->
+                        <div class="renovation-tier medium p-4 mb-4" id="medium-tier">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold">Medium Budget</h3>
+                                <div class="flex items-center">
+                                    <span class="text-gray-400 mr-2">Include</span>
+                                    <input type="checkbox" id="medium-enabled" name="medium_enabled" class="tier-checkbox w-5 h-5">
+                                </div>
+                            </div>
+                            <div class="tier-content hidden space-y-3">
+                                <p class="text-gray-500">Moderate renovations with significant improvements.</p>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="medium-cost">Estimated Cost (€)</label>
+                                    <input type="number" id="medium-cost" name="medium_cost" class="form-input" placeholder="e.g. 60000">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="medium-description">Description</label>
+                                    <textarea id="medium-description" name="medium_description" class="form-input" rows="2" placeholder="Describe the medium budget renovations"></textarea>
+                                </div>
+                                <!-- Image upload for tier (optional, add if needed) -->
+                            </div>
+                        </div>
+
+                        <!-- High Budget Tier -->
+                        <div class="renovation-tier high p-4 mb-4" id="high-tier">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="font-bold">High Budget</h3>
+                                <div class="flex items-center">
+                                    <span class="text-gray-400 mr-2">Include</span>
+                                    <input type="checkbox" id="high-enabled" name="high_enabled" class="tier-checkbox w-5 h-5">
+                                </div>
+                            </div>
+                            <div class="tier-content hidden space-y-3">
+                                <p class="text-gray-500">Extensive renovations with premium improvements.</p>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="high-cost">Estimated Cost (€)</label>
+                                    <input type="number" id="high-cost" name="high_cost" class="form-input" placeholder="e.g. 100000">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-400 mb-1" for="high-description">Description</label>
+                                    <textarea id="high-description" name="high_description" class="form-input" rows="2" placeholder="Describe the high budget renovations"></textarea>
+                                </div>
+                                <!-- Image upload for tier (optional, add if needed) -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-8 flex justify-center gap-4">
+                         <button type="button" id="cancel-button" class="btn-danger font-medium px-8 py-3 text-lg">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary font-medium px-8 py-3 text-lg">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right side: Preview (Identical structure to new_listing.html) -->
+            <div class="lg:w-1/3 sticky top-20 self-start">
+                <div class="property-detail-card p-6 bg-gray-800 rounded-xl shadow-lg">
+                    <h2 class="text-xl font-bold mb-4">Listing Preview</h2>
+
+                    <!-- Property Preview -->
+                    <div id="property-preview" class="mb-6">
+                        <div class="mb-4 bg-gray-700 rounded-xl overflow-hidden">
+                            <div id="preview-image" class="h-48 flex items-center justify-center text-gray-500 bg-cover bg-center">
+                                <!-- Image or placeholder loaded by JS -->
+                                <div class="text-center" id="preview-image-placeholder">
+                                    <i class="fas fa-image text-4xl mb-2"></i>
+                                    <p>Property Photos</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h3 id="preview-title" class="text-xl font-bold">Property Title</h3>
+                            <p id="preview-price" class="text-blue-500 text-xl font-bold">€0</p>
+                        </div>
+
+                        <div class="mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>
+                            <span id="preview-location" class="text-gray-400">Location</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm text-gray-400 mb-4">
+                            <div>
+                                <i class="fas fa-bed mr-1"></i> <span id="preview-bedroom">0</span> bedrooms
+                            </div>
+                            <div>
+                                <i class="fas fa-bath mr-1"></i> <span id="preview-bathroom">0</span> baths
+                            </div>
+                            <div>
+                                <i class="fas fa-ruler-combined mr-1"></i> <span id="preview-area">0</span> m²
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold mb-2">Description</h4>
+                            <p id="preview-description" class="text-gray-400">
+                                Property description...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Preview with Map -->
+                <div class="mt-6 bg-gray-800 rounded-xl shadow-lg">
+                    <h4 class="font-semibold p-4">Location on Map</h4>
+                    <div id="preview-map" style="height: 300px; border-radius: 0 0 12px 12px;" class="mb-2"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- CONFIG ---
+        const API_URL = 'http://localhost:8800/api';
+        const UPLOAD_URL = 'http://localhost:8800/api/listing-images/upload-multiple'; // Assuming same endpoint for uploads
+        let listingId = null; // Will be set on load
+        let currentListingData = {}; // Store fetched listing data
+        let imagesToRemove = []; // Keep track of images marked for removal
+        let newFilesToUpload = []; // Keep track of new files selected
+
+        // --- UTILITY FUNCTIONS ---
+        function getQueryParam(name) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(name);
+        }
+
+        function formatPrice(value) {
+            const price = Number(value) || 0;
+            return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(price);
+        }
+
+        // --- MAP VARIABLES ---
+        let mainMap, previewMap;
+        let mainMarker, previewMarker, circleRadius;
+        const defaultLocation = [38.7223, -9.1393]; // Lisbon default
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log("Document loaded, initializing edit page...");
+            listingId = getQueryParam('id');
+            const token = localStorage.getItem('token');
+
+            // Set back link dynamically
+            const backLink = document.getElementById('back-link');
+            if (backLink) {
+                 // Prefer going back to property page if possible, else user profile
+                backLink.href = listingId ? `property.html?id=${listingId}` : 'user-profile.html';
+            }
+
+
+            if (!listingId) {
+                alert('Listing ID not specified.');
+                window.location.href = 'user-profile.html';
+                return;
+            }
+            if (!token) {
+                alert('You need to be authenticated to edit.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Fetch listing data
+                const response = await fetch(`${API_URL}/posts/${listingId}`, {
+                     headers: { 'Authorization': `Bearer ${token}` } // Include token if endpoint requires auth
+                });
+                if (!response.ok) {
+                    if (response.status === 404) throw new Error('Listing not found.');
+                    if (response.status === 403) throw new Error('You do not have permission to edit this listing.');
+                    throw new Error(`Error fetching listing data (${response.status})`);
+                }
+                currentListingData = await response.json();
+                console.log("Listing data fetched:", currentListingData);
+
+                // Initialize maps and fill form AFTER data is fetched
+                setTimeout(() => initializePageWithData(currentListingData), 500); // Delay to ensure map containers are ready
+
+            } catch (error) {
+                console.error('Error loading listing:', error);
+                alert(`Error loading listing: ${error.message}`);
+                window.location.href = 'user-profile.html'; // Redirect if loading fails
+            }
+        });
+
+        function initializePageWithData(listing) {
+            // Initialize maps first, using listing location if available
+            const initialLocation = (listing.latitude && listing.longitude)
+                ? [parseFloat(listing.latitude), parseFloat(listing.longitude)]
+                : defaultLocation;
+
+            initializeMaps(initialLocation);
+
+            // Fill form fields
+            fillForm(listing);
+
+            // Setup event listeners (map interactions, form inputs, buttons, image uploads)
+            setupEventListeners();
+
+            // Initial preview update based on fetched data
+            updatePreview();
+
+             // Initial map update based on fetched data
+            updateMapFromCoordinates(); // Use coordinates from form fields
+        }
+
+
+        // --- MAP FUNCTIONS ---
+        function initializeMaps(initialLocation) {
+            console.log("Initializing maps with location:", initialLocation);
+            const locationMapContainer = document.getElementById('location-map');
+            const previewMapContainer = document.getElementById('preview-map');
+
+            if (!locationMapContainer) {
+                console.error("Location map container not found!"); return;
+            }
+            if (!previewMapContainer) {
+                console.error("Preview map container not found!");
+            }
+
+            // Main Map (Editable)
+            try {
+                mainMap = L.map('location-map').setView(initialLocation, 15); // Higher zoom for specific location
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(mainMap);
+
+                mainMarker = L.marker(initialLocation, { draggable: true }).addTo(mainMap);
+
+                const initialRadius = parseInt(document.getElementById('radius-slider').value) || 100;
+                circleRadius = L.circle(initialLocation, {
+                    radius: initialRadius, fillColor: '#3b82f6', fillOpacity: 0.2, color: '#3b82f6', weight: 1
+                }).addTo(mainMap);
+
+                mainMap.invalidateSize(); // Force resize
+                console.log("Main map initialized.");
+            } catch (error) { console.error("Error initializing main map:", error); }
+
+            // Preview Map (Static)
+            if (previewMapContainer) {
+                try {
+                    previewMap = L.map('preview-map').setView(initialLocation, 15);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(previewMap);
+                    previewMarker = L.marker(initialLocation).addTo(previewMap);
+                    previewMap.invalidateSize(); // Force resize
+                    console.log("Preview map initialized.");
+                } catch (error) { console.error("Error initializing preview map:", error); }
+            }
+        }
+
+        function updateCoordinateInputs(position) {
+            if (!position) return;
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            if (latInput && lngInput) {
+                latInput.value = position.lat.toFixed(6);
+                lngInput.value = position.lng.toFixed(6);
+                updatePreview(); // Update preview when coordinates change
+            }
+        }
+
+        function updatePreviewMap(position) {
+            if (!position || !previewMarker || !previewMap) return;
+            try {
+                previewMarker.setLatLng(position);
+                previewMap.setView(position, previewMap.getZoom()); // Keep current zoom level
+            } catch (error) { console.error("Error updating preview map:", error); }
+        }
+
+         function updateMapFromCoordinates() {
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            if (!latInput || !lngInput) return;
+
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+
+            if (!isNaN(lat) && !isNaN(lng) && mainMarker && mainMap) {
+                const position = L.latLng(lat, lng);
+                mainMarker.setLatLng(position);
+                if (circleRadius) circleRadius.setLatLng(position);
+                mainMap.setView(position, mainMap.getZoom()); // Keep zoom
+                updatePreviewMap(position);
+            }
+        }
+
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    if (mainMarker && mainMap) {
+                        const currentPosition = L.latLng(lat, lng);
+                        mainMarker.setLatLng(currentPosition);
+                        if (circleRadius) circleRadius.setLatLng(currentPosition);
+                        mainMap.setView(currentPosition, 15); // Zoom in on current location
+                        updateCoordinateInputs(currentPosition);
+                        updatePreviewMap(currentPosition);
+                    }
+                }, error => alert('Could not get your location: ' + error.message));
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        }
+
+        function searchLocation() {
+            const addressInput = document.getElementById('address');
+            const cityInput = document.getElementById('city');
+            if (!addressInput || !cityInput) return;
+
+            const address = addressInput.value || '';
+            const city = cityInput.value || '';
+            const searchQuery = `${address}, ${city}`.trim();
+
+            if (!searchQuery || searchQuery === ',') {
+                alert('Please enter an address to search.'); return;
+            }
+
+            console.log("Searching for address:", searchQuery);
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=pt`) // Prioritize Portugal
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0 && mainMarker && mainMap) {
+                        const result = data[0];
+                        console.log("Found address:", result);
+                        const lat = parseFloat(result.lat);
+                        const lng = parseFloat(result.lon);
+                        const searchPosition = L.latLng(lat, lng);
+
+                        mainMarker.setLatLng(searchPosition);
+                        if (circleRadius) circleRadius.setLatLng(searchPosition);
+                        mainMap.setView(searchPosition, 16); // Zoom in more
+                        updateCoordinateInputs(searchPosition);
+                        updatePreviewMap(searchPosition);
+                    } else {
+                        alert('Address not found. Try a more specific address.');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error searching address:", error);
+                    alert('Error searching for address: ' + error.message);
+                });
+        }
+
+
+        // --- FORM HANDLING ---
+        function fillForm(listing) {
+            if (!listing) return;
+
+            // Basic Info
+            document.getElementById('title').value = listing.title || '';
+            document.getElementById('description').value = listing.description || '';
+            document.getElementById('price').value = listing.price || '';
+            document.getElementById('propertyType').value = listing.propertyType || ''; // Make sure this matches DB field
+            document.getElementById('bedroom').value = listing.bedroom || '';
+            document.getElementById('bathroom').value = listing.bathroom || '';
+            document.getElementById('garages').value = listing.garages || ''; // Make sure this matches DB field
+            document.getElementById('areaUtil').value = listing.area || ''; // Assuming 'area' is areaUtil
+            document.getElementById('areaBruta').value = listing.areaBruta || ''; // Make sure this matches DB field
+
+            // Location
+            document.getElementById('address').value = listing.address || '';
+            document.getElementById('city').value = listing.city || '';
+            document.getElementById('district').value = listing.district || ''; // Make sure this matches DB field
+            document.getElementById('postalCode').value = listing.postalCode || ''; // Make sure this matches DB field
+            document.getElementById('parish').value = listing.parish || ''; // Make sure this matches DB field
+            document.getElementById('latitude').value = listing.latitude || '';
+            document.getElementById('longitude').value = listing.longitude || '';
+
+            // Images - Display existing images with remove buttons
+            const imagePreviewContainer = document.getElementById('property-image-preview');
+            const existingImagesInput = document.getElementById('existing-images');
+            const imagesToKeepInput = document.getElementById('images-to-keep');
+            let existingImageUrls = [];
+            imagePreviewContainer.innerHTML = ''; // Clear previous
+
+            if (listing.images && Array.isArray(listing.images)) {
+                existingImageUrls = listing.images.map(url => url.startsWith('http') ? url : `${API_URL}${url}`); // Ensure full URLs
+                existingImagesInput.value = JSON.stringify(existingImageUrls); // Store original URLs
+                imagesToKeepInput.value = JSON.stringify(existingImageUrls); // Initially, keep all
+
+                existingImageUrls.forEach((url, index) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('image-container');
+                    imgContainer.dataset.imageUrl = url; // Store URL for removal logic
+
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = `Property image ${index + 1}`;
+                    imgContainer.appendChild(img);
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.classList.add('remove-image-btn');
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.onclick = () => handleRemoveExistingImage(imgContainer, url);
+                    imgContainer.appendChild(removeBtn);
+
+                    imagePreviewContainer.appendChild(imgContainer);
+                });
+                 // Update main preview with the first existing image
+                if (existingImageUrls.length > 0) {
+                    updateMainPreviewImage(existingImageUrls[0]);
+                } else {
+                     updateMainPreviewImage(null); // Show placeholder if no images
+                }
+            } else {
+                 updateMainPreviewImage(null); // Show placeholder if no images initially
+            }
+
+
+            // Renovation Tiers (Example for minimum tier, repeat for others)
+            // Assuming listing.renovationTiers is an array of objects like { type: 'minimum', cost: 15000, description: '...' }
+            const renovationTiers = listing.renovationTiers || []; // Use empty array if undefined
+
+            function populateTier(tierType) {
+                const tierData = renovationTiers.find(t => t.type === tierType);
+                const enabledCheckbox = document.getElementById(`${tierType}-enabled`);
+                const costInput = document.getElementById(`${tierType}-cost`);
+                const descriptionInput = document.getElementById(`${tierType}-description`);
+                const tierContent = document.getElementById(`${tierType}-tier`)?.querySelector('.tier-content');
+
+                if (tierData && enabledCheckbox && costInput && descriptionInput && tierContent) {
+                    enabledCheckbox.checked = true;
+                    costInput.value = tierData.cost || '';
+                    descriptionInput.value = tierData.description || '';
+                    tierContent.classList.remove('hidden');
+                } else if (enabledCheckbox) {
+                    enabledCheckbox.checked = false;
+                     if(tierContent) tierContent.classList.add('hidden');
+                }
+            }
+
+            populateTier('minimum');
+            populateTier('low');
+            populateTier('medium');
+            populateTier('high');
+        }
+
+        // --- EVENT LISTENERS ---
+        function setupEventListeners() {
+            // Map interactions
+            if (mainMap) {
+                mainMap.on('click', e => {
+                    const position = e.latlng;
+                    if (mainMarker && circleRadius) {
+                        mainMarker.setLatLng(position);
+                        circleRadius.setLatLng(position);
+                        updateCoordinateInputs(position);
+                        updatePreviewMap(position);
+                    }
+                });
+            }
+            if (mainMarker) {
+                mainMarker.on('dragend', () => {
+                    const position = mainMarker.getLatLng();
+                    if (circleRadius) circleRadius.setLatLng(position);
+                    updateCoordinateInputs(position);
+                    updatePreviewMap(position);
+                });
+            }
+
+            // Radius slider
+            const radiusSlider = document.getElementById('radius-slider');
+            const radiusValue = document.getElementById('radius-value');
+            if (radiusSlider && radiusValue) {
+                radiusSlider.addEventListener('input', function() {
+                    const value = this.value;
+                    radiusValue.textContent = value + 'm';
+                    if (circleRadius) circleRadius.setRadius(parseInt(value));
+                });
+                 // Set initial value display
+                 radiusValue.textContent = radiusSlider.value + 'm';
+            }
+
+            // Coordinate inputs manual change
+            const latInput = document.getElementById('latitude');
+            const lngInput = document.getElementById('longitude');
+            if (latInput) latInput.addEventListener('change', updateMapFromCoordinates);
+            if (lngInput) lngInput.addEventListener('change', updateMapFromCoordinates);
+
+            // Location buttons
+            const getLocationBtn = document.getElementById('get-location');
+            const searchLocationBtn = document.getElementById('search-location');
+            if (getLocationBtn) getLocationBtn.addEventListener('click', getCurrentLocation);
+            if (searchLocationBtn) searchLocationBtn.addEventListener('click', searchLocation);
+
+            // Form inputs update preview
+            const formInputs = document.querySelectorAll('#edit-listing-form input, #edit-listing-form textarea, #edit-listing-form select');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            // Renovation tier checkboxes toggle content
+            const tierCheckboxes = document.querySelectorAll('.tier-checkbox');
+            tierCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const tierContent = this.closest('.renovation-tier').querySelector('.tier-content');
+                    if (tierContent) {
+                        tierContent.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            });
+
+            // New image upload handling
+            const propertyPhotosInput = document.getElementById('property-photos');
+            if (propertyPhotosInput) {
+                propertyPhotosInput.addEventListener('change', handleNewImageSelection);
+            }
+
+            // Form submission
+            const editListingForm = document.getElementById('edit-listing-form');
+            if (editListingForm) {
+                editListingForm.addEventListener('submit', handleFormSubmit);
+            }
+
+            // Cancel button
+            const cancelButton = document.getElementById('cancel-button');
+            if (cancelButton) {
+                cancelButton.addEventListener('click', () => {
+                    if (confirm("Are you sure you want to cancel? All unsaved changes will be lost.")) {
+                        window.history.back(); // Go back to the previous page
+                    }
+                });
+            }
+        }
+
+        // --- PREVIEW UPDATE ---
+        function updatePreview() {
+            // Title
+            const titleInput = document.getElementById('title');
+            const previewTitle = document.getElementById('preview-title');
+            if (titleInput && previewTitle) previewTitle.textContent = titleInput.value || 'Property Title';
+
+            // Price
+            const priceInput = document.getElementById('price');
+            const previewPrice = document.getElementById('preview-price');
+            if (priceInput && previewPrice) previewPrice.textContent = formatPrice(priceInput.value);
+
+            // Location Text
+            const addressInput = document.getElementById('address');
+            const cityInput = document.getElementById('city');
+            const previewLocation = document.getElementById('preview-location');
+            if (addressInput && cityInput && previewLocation) {
+                const address = addressInput.value || '';
+                const city = cityInput.value || '';
+                let locationText = [address, city].filter(Boolean).join(', ') || 'Location';
+                previewLocation.textContent = locationText;
+            }
+
+            // Details (Bed, Bath, Area)
+            const bedroomInput = document.getElementById('bedroom');
+            const previewBedroom = document.getElementById('preview-bedroom');
+            if (bedroomInput && previewBedroom) previewBedroom.textContent = bedroomInput.value || '0';
+
+            const bathroomInput = document.getElementById('bathroom');
+            const previewBathroom = document.getElementById('preview-bathroom');
+            if (bathroomInput && previewBathroom) previewBathroom.textContent = bathroomInput.value || '0';
+
+            const areaInput = document.getElementById('areaUtil'); // Use areaUtil for preview
+            const previewArea = document.getElementById('preview-area');
+            if (areaInput && previewArea) previewArea.textContent = areaInput.value || '0';
+
+            // Description
+            const descriptionInput = document.getElementById('description');
+            const previewDescription = document.getElementById('preview-description');
+            if (descriptionInput && previewDescription) previewDescription.textContent = descriptionInput.value || 'Property description...';
+
+             // Update preview map if coordinates changed via input fields
+             const latInput = document.getElementById('latitude');
+             const lngInput = document.getElementById('longitude');
+             if (latInput && lngInput && !isNaN(parseFloat(latInput.value)) && !isNaN(parseFloat(lngInput.value))) {
+                 updatePreviewMap(L.latLng(parseFloat(latInput.value), parseFloat(lngInput.value)));
+             }
+        }
+
+        // --- IMAGE HANDLING ---
+
+        function handleRemoveExistingImage(imgContainer, urlToRemove) {
+             if (!imgContainer || !urlToRemove) return;
+
+             // Visually remove the container
+             imgContainer.remove();
+
+             // Update the list of images to keep
+             const imagesToKeepInput = document.getElementById('images-to-keep');
+             let currentImagesToKeep = JSON.parse(imagesToKeepInput.value || '[]');
+             currentImagesToKeep = currentImagesToKeep.filter(url => url !== urlToRemove);
+             imagesToKeepInput.value = JSON.stringify(currentImagesToKeep);
+
+             console.log("Removed image:", urlToRemove);
+             console.log("Images to keep:", currentImagesToKeep);
+
+             // Update the main preview image if the removed one was the first
+             const firstKeptImage = currentImagesToKeep.length > 0 ? currentImagesToKeep[0] : null;
+             updateMainPreviewImage(firstKeptImage);
+         }
+
+
+        function handleNewImageSelection(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('new-property-image-preview');
+            if (!previewContainer) return;
+
+            previewContainer.innerHTML = ''; // Clear previous new previews
+            newFilesToUpload = []; // Reset the list of new files
+
+            if (!files.length) {
+                 // If files are cleared, potentially revert main preview to first existing image
+                 const imagesToKeep = JSON.parse(document.getElementById('images-to-keep').value || '[]');
+                 updateMainPreviewImage(imagesToKeep.length > 0 ? imagesToKeep[0] : null);
+                 return;
+            }
+
+
+            // Limit number of new files
+            const maxNewFiles = 10; // Or adjust based on total allowed
+             if (files.length > maxNewFiles) {
+                alert(`You can upload a maximum of ${maxNewFiles} new photos.`);
+                event.target.value = ''; // Clear selection
+                return;
+            }
+
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!file.type.startsWith('image/')) continue;
+
+                 // Size check (e.g., 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`The file "${file.name}" is too large (max 5MB).`);
+                    continue; // Skip this file
+                }
+
+
+                newFilesToUpload.push(file); // Add valid file to upload list
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgPreview = document.createElement('div');
+                    imgPreview.classList.add('relative', 'w-24', 'h-24'); // Same style as existing previews
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('w-full', 'h-full', 'object-cover', 'rounded');
+                    imgPreview.appendChild(img);
+
+                    // Optional: Add remove button for *new* previews if needed
+                    // const removeBtn = ...
+
+                    previewContainer.appendChild(imgPreview);
+
+                    // Update main preview with the first *new* image if it's the first one added
+                    if (i === 0) {
+                        updateMainPreviewImage(e.target.result);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+             console.log("New files selected:", newFilesToUpload.map(f => f.name));
+        }
+
+        function updateMainPreviewImage(src) {
+            const previewImgDiv = document.getElementById('preview-image');
+            const placeholder = document.getElementById('preview-image-placeholder');
+
+            if (!previewImgDiv || !placeholder) return;
+
+            if (src) {
+                previewImgDiv.style.backgroundImage = `url(${src})`;
+                placeholder.classList.add('hidden'); // Hide placeholder
+            } else {
+                previewImgDiv.style.backgroundImage = 'none';
+                placeholder.classList.remove('hidden'); // Show placeholder
+            }
+        }
+
+        async function uploadNewImages() {
+            if (newFilesToUpload.length === 0) {
+                console.log('No new images to upload.');
+                return []; // Return empty array if no new files
+            }
+
+            const uploadStatus = document.getElementById('upload-status');
+            const uploadMessage = document.getElementById('upload-message');
+            const uploadSpinner = document.getElementById('upload-spinner');
+
+            if (uploadStatus) uploadStatus.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+            if (uploadStatus) uploadStatus.classList.add('bg-blue-100', 'text-blue-700');
+            if (uploadMessage) uploadMessage.textContent = 'Uploading new images...';
+            if (uploadSpinner) uploadSpinner.classList.remove('hidden');
+
+            try {
+                const formData = new FormData();
+                const listingCode = currentListingData.listingCode || Date.now().toString(36); // Reuse existing code or generate
+                formData.append('listingCode', listingCode);
+
+                newFilesToUpload.forEach(file => {
+                    formData.append('images', file);
+                });
+
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('Authentication required');
+
+                console.log('Uploading new images...');
+                const response = await fetch(UPLOAD_URL, { // Use the defined UPLOAD_URL
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                 const contentType = response.headers.get("content-type");
+                 if (contentType && contentType.includes("text/html")) {
+                     throw new Error("Server returned HTML instead of JSON during image upload.");
+                 }
+
+                if (!response.ok) {
+                    let errorMsg = 'Failed to upload new images';
+                    try { const errData = await response.json(); errorMsg = errData.error || errData.message || errorMsg; } catch (e) {}
+                    throw new Error(errorMsg);
+                }
+
+                const data = await response.json();
+                console.log('New images upload successful:', data);
+
+                if (uploadStatus) uploadStatus.classList.replace('bg-blue-100', 'bg-green-100');
+                if (uploadStatus) uploadStatus.classList.replace('text-blue-700', 'text-green-700');
+                if (uploadMessage) uploadMessage.textContent = 'New images uploaded!';
+                if (uploadSpinner) uploadSpinner.classList.add('hidden');
+
+                return data.imageUrls || []; // Return the URLs of the newly uploaded images
+
+            } catch (error) {
+                console.error('Error uploading new images:', error);
+                if (uploadStatus) uploadStatus.classList.replace('bg-blue-100', 'bg-red-100');
+                if (uploadStatus) uploadStatus.classList.replace('text-blue-700', 'text-red-700');
+                if (uploadMessage) uploadMessage.textContent = `Upload error: ${error.message}`;
+                if (uploadSpinner) uploadSpinner.classList.add('hidden');
+                throw error; // Re-throw error to stop form submission
+            }
+        }
+
+
+        // --- FORM SUBMISSION ---
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Session expired. Please login again.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+
+            try {
+                // 1. Upload new images if any were selected
+                const newImageUrls = await uploadNewImages(); // Returns URLs of *newly* uploaded images
+
+                // 2. Get final list of image URLs
+                let finalImageUrls = [];
+                if (newFilesToUpload.length > 0) {
+                    // If new files were uploaded, use only their URLs (replace strategy)
+                    finalImageUrls = newImageUrls;
+                } else {
+                    // If no new files, use the list of existing images to keep
+                    finalImageUrls = JSON.parse(document.getElementById('images-to-keep').value || '[]');
+                }
+
+
+                // 3. Collect form data
+                const formData = new FormData(event.target);
+                const listingData = Object.fromEntries(formData.entries());
+
+                // 4. Prepare data for PUT request (match schema)
+                 const cleanedData = {
+                    title: listingData.title,
+                    description: listingData.description,
+                    price: parseInt(listingData.price) || 0,
+                    images: finalImageUrls, // Use the final list
+                    address: listingData.address,
+                    city: listingData.city,
+                    bedroom: parseInt(listingData.bedroom) || 0,
+                    bathroom: parseFloat(listingData.bathroom) || 0,
+                    latitude: String(listingData.latitude || ""),
+                    longitude: String(listingData.longitude || ""),
+                    area: parseInt(listingData.area) || 0, // Assuming 'area' is areaUtil
+                    // Include other fields if they exist in your schema and form
+                    propertyType: listingData.propertyType,
+                    garages: parseInt(listingData.garages) || 0,
+                    areaBruta: parseInt(listingData.areaBruta) || null, // Optional field
+                    district: listingData.district,
+                    postalCode: listingData.postalCode,
+                    parish: listingData.parish,
+                    // Add renovation tiers data if needed, structured as expected by the backend
+                    // renovationTiers: buildRenovationTiersData() // Example helper function
+                };
+
+                console.log('Submitting updated data:', cleanedData);
+
+                // 5. Send PUT request
+                const response = await fetch(`${API_URL}/posts/${listingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(cleanedData)
+                });
+
+                 const contentType = response.headers.get("content-type");
+                 if (contentType && contentType.includes("text/html")) {
+                     throw new Error("Server returned HTML instead of JSON during update.");
+                 }
+
+
+                if (!response.ok) {
+                    let errorMsg = 'Error updating listing';
+                     try { const errData = await response.json(); errorMsg = errData.message || errData.error || errorMsg; } catch (e) {}
+                    throw new Error(`${errorMsg} (${response.status})`);
+                }
+
+                const responseData = await response.json();
+                console.log("Update successful:", responseData);
+
+                // 6. Success
+                alert('Listing updated successfully!');
+                window.location.href = `property.html?id=${listingId}`; // Redirect to the updated property page
+
+            } catch (error) {
+                console.error('Error updating listing:', error);
+                alert(`Error saving changes: ${error.message}`);
+                // Reset button state only on error
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+            // Don't reset button on success, as we are redirecting
+        }
+
+        // Helper to build renovation tiers data (example)
+        function buildRenovationTiersData() {
+            const tiers = [];
+            const tierTypes = ['minimum', 'low', 'medium', 'high'];
+            tierTypes.forEach(type => {
+                const enabled = document.getElementById(`${type}-enabled`)?.checked;
+                if (enabled) {
+                    tiers.push({
+                        type: type,
+                        cost: parseInt(document.getElementById(`${type}-cost`)?.value) || 0,
+                        description: document.getElementById(`${type}-description`)?.value || ''
+                        // Add image URLs if your tiers support them
+                    });
+                }
+            });
+            return tiers;
+        }
+
+    </script>
+
+    <!-- Include external JS if needed, e.g., for complex image handling -->
+    <!-- <script src="/js/listing-image-upload.js"></script> -->
+</body>
+</html>
