@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favourite Properties - Estate App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>/*All the alinments design/visual final review were performed with help of various AI to find various problems throughout the development */
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #1e293b;
+            --accent-color: #2563eb;
+            --border-radius: 24px;
+            --card-bg: #1e293b;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: var(--text-primary);
+        }
+        
+        .header-gradient {
+            background: linear-gradient(90deg, #1e40af 0%, #1e3a8a 100%);
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .property-image {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+        
+        .search-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-radius: 12px;
+            padding: 12px 24px;
+            transition: all 0.15s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .feature-badge {
+            background-color: #0f172a;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        /* --- NAV-LINK HEADER STYLE EXACTLY LIKE INDEX --- */
+        .nav-link {
+            position: relative;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            transition: all 0.15s ease;
+            padding: 8px 16px;
+            margin: 0 8px;
+            text-align: center;
+            display: inline-block;
+        }
+        .nav-link:hover {
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            color: #ffffff;
+        }
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.15s ease;
+        }
+        .nav-link:hover:after,
+        .nav-link.active:after {
+            width: 100%;
+        }
+        /* --- END NAV-LINK HEADER STYLE --- */
+        
+        .heart-icon {
+            background-color: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            color: #e2e8f0;
+        }
+        
+        .heart-icon:hover {
+            color: #f43f5e;
+        }
+        
+        .location-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .price-tag {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .badge-premium {
+            background: linear-gradient(90deg, #1e40af 0%, #1e3a8a 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .auth-links {
+            font-weight: 500;
+        }
+        
+        .auth-btn {
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+        }
+        
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle-group {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 4px;
+            display: inline-flex;
+        }
+        
+        .toggle-option {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        
+        .toggle-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .toggle-option.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-nav {
+            background-color: #0f172a;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .empty-section {
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        
+        .auth-links a {
+            transition: all 0.15s ease;
+        }
+        
+        .auth-links a:hover {
+            color: #dbeafe;
+            transform: translateY(-2px);
+        }
+        
+        .search-bar input:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        .search-bar button {
+            transition: all 0.15s ease;
+        }
+        
+        .search-bar button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(15deg);
+        }
+        
+        a.text-blue-400 {
+            position: relative;
+            transition: all 0.15s ease;
+        }
+        
+        a.text-blue-400:hover {
+            color: #93c5fd;
+        }
+        
+        a.text-blue-400:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #93c5fd;
+            transition: width 0.15s ease;
+        }
+        
+        a.text-blue-400:hover:after {
+            width: 100%;
+        }
+        
+        nav.fixed a {
+            transition: all 0.15s ease;
+        }
+        
+        nav.fixed a:hover {
+            transform: translateY(-5px);
+        }
+        
+        nav.fixed a:hover i {
+            color: var(--primary-color);
+        }
+        
+        nav.fixed a:hover span {
+            color: var(--text-primary);
+        }
+        
+        #logoutBtn {
+            transition: all 0.15s ease;
+        }
+        
+        #logoutBtn:hover {
+            color: #dbeafe;
+            transform: translateY(-2px);
+        }
+
+        /* Locked feature styling */
+        .locked-feature {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: var(--text-secondary) !important;
+        }
+
+        .locked-feature:hover {
+            transform: none !important;
+        }
+
+        .locked-feature:after {
+            display: none !important;
+        }
+
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 30;
+        }
+        .content-wrapper {
+            padding-top: 200px; /* Ajuste baseado na altura do header */
+        }
+        .auth-linkslogout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 40;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        /* Centralize os links de navegação */
+        nav.hidden.md\:flex {
+            justify-content: center;
+            flex: 1;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #favoriteProperties {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(286px, 1fr));
+            gap: 1rem;
+            max-width: none;
+            margin: 0 2rem; /* Add spacing from the margins */
+            padding: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            .card {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        .container, main.container {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .section-title-row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            margin-left: 2vw;
+        }
+
+        @media (max-width: 900px) {
+            .section-title-row {
+                margin-left: 1vw;
+            }
+        }
+
+        .favorite-btn.animated i {
+            animation: pop 0.3s;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with gradient background -->
+    <header class="header-gradient text-white pt-6 pb-8 px-0 mb-8 fixed-header">
+        <div class="w-full relative px-10">
+            <div class="flex justify-between items-center mb-8">
+                <a href="/index.html" class="text-2xl font-bold pl-0 ml-0">DomuState</a>
+                <!-- Centralized Navigation Links -->
+                <div class="flex-1 flex justify-center">
+                    <nav class="relative flex space-x-10">
+                        <a href="/index.html" class="nav-link">Home</a>
+                        <a href="/favorites.html" class="nav-link active">Favorites</a>
+                        <a href="/new_listing.html" class="nav-link">Sell</a>
+                        <a href="#" class="nav-link locked-feature" style="pointer-events: none">
+                            <span class="flex items-center gap-2 opacity-50">
+                                Renovate
+                                <i class="fas fa-lock text-sm"></i>
+                            </span>
+                        </a>
+                    </nav>
+                </div>
+                <!-- Auth Links - Desktop & Mobile -->
+                <div class="flex items-center space-x-4 auth-links" id="authLinks">
+                    <a href="/login.html" class="auth-btn">Sign in</a>
+                    <span class="text-white opacity-50">|</span>
+                    <a href="/register.html" class="auth-btn">Sign up</a>
+                </div>
+                <!-- User Info - Desktop & Mobile -->
+                <div class="flex items-center space-x-4 auth-linkslogout" id="userInfo" style="display: none;">
+                    <i class="fas fa-user text-white"></i>
+                    <a href="/user-profile.html" id="username" class="text-white transition-all duration-150 hover:text-blue-200 hover:-translate-y-0.5"></a>
+                    <button id="logoutBtn" class="text-white">Logout</button>
+                </div>
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-150">
+                    <i class="fas fa-bars text-white"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <main class="container mx-auto px-6">
+            <!-- Favorites Section -->
+            <section class="mb-24">
+                <div class="mb-6 relative">
+                    <h2 class="text-xl font-bold ">Your Favourite Properties</h2>
+                    <button id="sortByPrice" class="btn-primary text-sm absolute right-2 top-0">
+                        <i class="fas fa-sort-amount-down mr-1"></i> Sort by Price
+                    </button>
+                </div>
+                
+                <div id="loginPrompt" class="hidden empty-section mb-16">
+                    <div class="text-left">
+                        <i class="far fa-heart text-gray-400 text-5xl mb-4"></i>
+                        <p class="text-gray-400 mb-4">Please sign in to view your favorite properties</p>
+                        <a href="/login.html" class="btn-primary inline-block">Sign In</a>
+                    </div>
+                </div>
+                
+                <div id="favoriteProperties" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <!-- Favorites will be loaded here dynamically -->
+                    <div class="text-center w-full col-span-full">
+                        <p class="text-gray-400">Loading favorite properties...</p>
+                    </div>
+                </div>
+                
+                <div id="noFavoritesMessage" class="hidden empty-section mb-16">
+                    <div class="text-center">
+                        <i class="far fa-heart text-gray-400 text-5xl mb-4"></i>
+                        <p class="text-gray-400 mb-4">To add more properties to you favorites</p>
+                        <a href="/index.html" class="btn-primary inline-block">Explore Properties</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-900 py-4 px-6 flex justify-around items-center border-t border-gray-800 rounded-t-3xl shadow-lg md:hidden">
+        <a href="/index.html" class="flex flex-col items-center text-gray-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Home</span>
+        </a>
+        <a href="#" class="flex flex-col items-center text-gray-500">
+            <i class="fas fa-search text-xl"></i>
+            <span class="text-xs mt-1">Search</span>
+        </a>
+        <a href="/favorites.html" class="flex flex-col items-center text-blue-500">
+            <i class="fas fa-heart text-xl"></i>
+            <span class="text-xs mt-1 font-medium">Favourites</span>
+        </a>
+        <a href="/new_listing.html" class="flex flex-col items-center text-gray-500">
+            <i class="fas fa-sign-out-alt text-xl"></i>
+            <span class="text-xs mt-1">Sell</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const API_URL = 'http://localhost:8800/api';
+            const token = localStorage.getItem('token');
+            let favoriteProperties = [];
+            let sortOrder = 'desc'; // Default sort order
+            
+            // Auth-related functionality
+            if (token) {
+                try {
+                    const response = await fetch(`${API_URL}/auth/me`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        document.getElementById('authLinks').style.display = 'none';
+                        document.getElementById('userInfo').style.display = 'flex';
+                        document.getElementById('username').textContent = data.username;
+                        // Remove login prompt se autenticado
+                        document.getElementById('loginPrompt').remove();
+                    } else {
+                        console.error('Failed to fetch user info:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                }
+            } else {
+                // User is not logged in, show login prompt
+                document.getElementById('loginPrompt').classList.remove('hidden');
+                document.getElementById('favoriteProperties').classList.add('hidden');
+            }
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    const response = await fetch(`${API_URL}/auth/logout`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (response.ok) {
+                        localStorage.removeItem('token');
+                        window.location.href = 'index.html';
+                    } else {
+                        console.error('Failed to logout:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                }
+            });
+            
+            // Function to create property card HTML
+            function getProperImageUrl(imageUrl) {
+                if (!imageUrl) return 'https://via.placeholder.com/300x200/1e293b/ffffff?text=No+Image';
+                if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl;
+                if (imageUrl.startsWith('/uploads/')) return `http://localhost:8800/api${imageUrl}`;
+                return `http://localhost:8800/api/uploads/listings/${imageUrl}`;
+            }
+
+            function createPropertyCard(property) {
+                let imageUrl = getProperImageUrl(property.images && property.images.length > 0 ? property.images[0] : null);
+                return `
+                <div class="card" data-id="${property.id}">
+                    <div class="relative">
+                        <img src="${imageUrl}"
+                             alt="${property.title}"
+                             class="property-image w-full"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200/1e293b/ffffff?text=Error+Loading+Image'; console.log('Image failed to load:', '${imageUrl}');">
+                        <button class="favorite-btn absolute top-4 right-4 heart-icon p-2 rounded-full bg-white" data-id="${property.id}">
+                            <i class="fas fa-heart${property.isFavorite ? ' text-red-500' : ' text-gray-500'}"></i>
+                        </button>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-lg font-bold">${property.title}</h3>
+                            <span class="price-tag">${property.price.toLocaleString()}€</span>
+                        </div>
+                        <p class="location-text mb-3">
+                            <i class="fas fa-map-marker-alt mr-1"></i> ${property.city}
+                        </p>
+                        <div class="flex items-center justify-between text-sm text-gray-400 mb-1">
+                            <div>
+                                <i class="fas fa-bed mr-1"></i> ${property.bedroom} bd
+                            </div>
+                            <div>
+                                <i class="fas fa-bath mr-1"></i> ${property.bathroom} ba
+                            </div>
+                            <div>
+                                <i class="fas fa-ruler-combined mr-1"></i> ${property.area} m²
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+            
+            // Função para adicionar event listeners aos cards e botões favoritos
+            function addCardEventListeners() {
+                document.querySelectorAll('.favorite-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        console.log('[DEBUG] Clicou no coração', btn, btn.getAttribute('data-id'));
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const postId = btn.getAttribute('data-id');
+                        const icon = btn.querySelector('i');
+                        icon.classList.toggle('text-red-500');
+                        btn.classList.add('animated');
+                        setTimeout(() => btn.classList.remove('animated'), 300);
+                        const success = await toggleFavorite(postId);
+                        if (success) {
+                            const card = btn.closest('.card');
+                            if (card) card.remove();
+                        } else {
+                            icon.classList.toggle('text-red-500');
+                        }
+                    });
+                });
+                document.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.closest('.favorite-btn')) {
+                            const propertyId = card.getAttribute('data-id');
+                            console.log('[DEBUG] Clicou no card, vai abrir property.html?id=' + propertyId);
+                            window.location.href = `property.html?id=${propertyId}`;
+                        }
+                    });
+                });
+            }
+
+            // Function to toggle favorite status
+            async function toggleFavorite(postId) {
+                try {
+                    const response = await fetch(`${API_URL}/posts/save/${postId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to remove from favorites');
+                    // Remove do array e da UI
+                    favoriteProperties = favoriteProperties.filter(prop => prop.id.toString() !== postId.toString());
+                    const card = document.querySelector(`.card[data-id="${postId}"]`);
+                    if (card) card.remove();
+                    
+                    // Check if there are no more favorites, show empty message
+                    if (favoriteProperties.length === 0) {
+                        const favoritesContainer = document.getElementById('favoriteProperties');
+                        const noFavoritesMessage = document.getElementById('noFavoritesMessage');
+                        
+                        // Hide the properties container
+                        favoritesContainer.classList.add('hidden');
+                        // Show the no favorites message
+                        noFavoritesMessage.classList.remove('hidden');
+                    }
+                    return true;
+                } catch (error) {
+                    console.error('Error removing favorite:', error);
+                    return false;
+                }
+            }
+            
+            // Function to fetch saved/favorite properties
+            async function fetchSavedProperties() {
+                if (!token) return [];
+                try {
+                    const response = await fetch(`${API_URL}/posts/favorites`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    console.log('DEBUG: fetchSavedProperties data', data);
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching favorite properties:', error);
+                    return [];
+                }
+            }
+            
+            // Function to display favorite properties
+            async function displayFavoriteProperties() {
+                if (!token) {
+                    console.log('DEBUG: Sem token, não vai buscar favoritos');
+                    return;
+                }
+                const favoritesContainer = document.getElementById('favoriteProperties');
+                const noFavoritesMessage = document.getElementById('noFavoritesMessage');
+                if (!favoritesContainer) {
+                    console.error('DEBUG: Não existe o container #favoriteProperties no DOM!');
+                    return;
+                }
+                if (!noFavoritesMessage) {
+                    console.error('DEBUG: Não existe o container #noFavoritesMessage no DOM!');
+                }
+                // Esconde sempre a mensagem antes de carregar
+                if (noFavoritesMessage) noFavoritesMessage.classList.add('hidden');
+                favoritesContainer.classList.remove('hidden');
+                favoritesContainer.innerHTML = '<div class="text-center w-full col-span-full"><p class="text-gray-400">Loading favorite properties...</p></div>';
+                
+                // CORREÇÃO: Atualiza a variável global, não cria uma nova local!
+                favoriteProperties = await fetchSavedProperties();
+                // Garante que todos têm isFavorite=true
+                favoriteProperties = favoriteProperties.map(p => ({...p, isFavorite: true}));
+                console.log('DEBUG: favoriteProperties (direto)', favoriteProperties);
+                // Limpa o container
+                favoritesContainer.innerHTML = '';
+                // Verifica se o array é realmente um array e se tem objetos válidos
+                if (Array.isArray(favoriteProperties) && favoriteProperties.length > 0 && favoriteProperties.some(p => p && p.id)) {
+                    console.log('DEBUG: Vai renderizar favoritos', favoriteProperties.length);
+                    favoritesContainer.innerHTML = favoriteProperties.map(createPropertyCard).join('');
+                    addCardEventListeners(); // <-- Adiciona listeners após renderizar
+                    favoritesContainer.classList.remove('hidden');
+                    if (noFavoritesMessage) noFavoritesMessage.classList.add('hidden');
+                } else {
+                    console.log('DEBUG: Não há favoritos, mostrar mensagem');
+                    favoritesContainer.classList.add('hidden');
+                    if (noFavoritesMessage) noFavoritesMessage.classList.remove('hidden');
+                }
+                // Verificar estado final dos elementos
+                console.log('DEBUG: favoritesContainer hidden?', favoritesContainer.classList.contains('hidden'));
+                console.log('DEBUG: noFavoritesMessage hidden?', noFavoritesMessage && noFavoritesMessage.classList.contains('hidden'));
+            }
+            
+            // Sort by price functionality
+            document.getElementById('sortByPrice').addEventListener('click', () => {
+                if (favoriteProperties.length > 0) {
+                    sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+                    
+                    // Update button icon
+                    const sortIcon = document.querySelector('#sortByPrice i');
+                    sortIcon.className = sortOrder === 'desc' 
+                        ? 'fas fa-sort-amount-down mr-1' 
+                        : 'fas fa-sort-amount-up mr-1';
+                    
+                    // Sort properties
+                    favoriteProperties.sort((a, b) => {
+                        return sortOrder === 'desc' 
+                            ? b.price - a.price 
+                            : a.price - b.price;
+                    });
+                    
+                    // Re-render
+                    const favoritesContainer = document.getElementById('favoriteProperties');
+                    favoritesContainer.innerHTML = favoriteProperties.map(createPropertyCard).join('');
+                    addCardEventListeners(); // <-- Adiciona listeners após sort
+                    
+                    // Re-add event listeners
+                    document.querySelectorAll('.favorite-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            console.log('[DEBUG] Clicou no coração', btn, btn.getAttribute('data-id'));
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const postId = btn.getAttribute('data-id');
+                            const icon = btn.querySelector('i');
+                            // Alterna a cor imediatamente
+                            icon.classList.toggle('text-red-500');
+                            btn.classList.add('animated');
+                            setTimeout(() => btn.classList.remove('animated'), 300);
+                            const success = await toggleFavorite(postId);
+                            if (success) {
+                                // Remove o card da UI
+                                const card = btn.closest('.card');
+                                if (card) card.remove();
+                            } else {
+                                // Reverte o estado visual se falhar
+                                icon.classList.toggle('text-red-500');
+                            }
+                        });
+                    });
+                    
+                    document.querySelectorAll('.card').forEach(card => {
+                        card.addEventListener('click', (e) => {
+                            if (!e.target.closest('.favorite-btn')) {
+                                const propertyId = card.getAttribute('data-id');
+                                console.log('[DEBUG] Clicou no card, vai abrir property.html?id=' + propertyId);
+                                window.location.href = `property.html?id=${propertyId}`;
+                            }
+                        });
+                    });
+                }
+            });
+            
+            // Search within favorites functionality
+            const searchFavoritesInput = document.getElementById('searchFavorites');
+            if (searchFavoritesInput) {
+                searchFavoritesInput.addEventListener('input', (e) => {
+                    const searchText = e.target.value.toLowerCase();
+                    const cards = document.querySelectorAll('.card');
+                    if (cards.length > 0) {
+                        cards.forEach(card => {
+                            const title = card.querySelector('h3').textContent.toLowerCase();
+                            const location = card.querySelector('.location-text').textContent.toLowerCase();
+                            if (title.includes(searchText) || location.includes(searchText)) {
+                                card.style.display = '';
+                            } else {
+                                card.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Clear search
+            const clearSearchBtn = document.getElementById('clearSearch');
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', () => {
+                    document.getElementById('searchFavorites').value = '';
+                    const cards = document.querySelectorAll('.card');
+                    cards.forEach(card => {
+                        card.style.display = '';
+                    });
+                });
+            }
+            
+            // Initialize page
+            if (token) {
+                await displayFavoriteProperties();
+            }
+        });
+    </script>
+</body>
+</html>
