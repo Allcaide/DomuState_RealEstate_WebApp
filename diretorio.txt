@@ -1,0 +1,48 @@
+real-estate-app/
+│
+├── api/                    # Backend
+│   ├── app.js              # Arquivo principal do servidor
+│   ├── package.json        # Dependências do backend
+│   ├── .env                # Variáveis de ambiente
+│   ├── .gitignore          # Git ignore do backend
+│   ├── controllers/        # Controladores
+│   │   ├── auth.controllers.js
+│   │   ├── post.controllers.js
+│   │   └── user.controllers.js
+│   ├── lib/                # Biblioteca de utilidades
+│   │   └── prisma.js
+│   ├── middlewares/        # Middlewares
+│   │   └── authMiddleware.js
+│   ├── prisma/             # Configuração do Prisma
+│   │   └── schema.prisma
+│   ├── routes/             # Rotas
+│   │   ├── auth.route.js
+│   │   ├── listing-images.route.js
+│   │   ├── post.route.js
+│   │   ├── upload.route.js
+│   │   └── user.route.js
+│   ├── uploads/            # Uploads de imagens
+│   │   └── listings/       # Imagens de propriedades
+│   └── utils/              # Utilitários administrativos
+│       ├── manage-listing-images.js
+│       └── update-image-urls.js
+│
+└── client/                 # Frontend
+    ├── package.json        # Dependências do frontend
+    ├── package-lock.json   # Lockfile do npm
+    ├── script.js           # Script principal do frontend
+    ├── public/             # Arquivos públicos (HTML/JS)
+    │   ├── edit_listing.html
+    │   ├── favorites.html
+    │   ├── index.html
+    │   ├── login.html
+    │   ├── new_listing.html
+    │   ├── property.html
+    │   ├── register.html
+    │   ├── user-profile.html
+    │   └── js/
+    │       ├── listing-image-upload.js
+    │       └── script.js
+    └── src/                # Código fonte utilitário
+        └── utils/
+            └── imageUpload.js
