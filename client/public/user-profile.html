@@ -117,10 +117,7 @@
                             <i class="fas fa-plus mr-2"></i> Add New Listing
                         </a>
                     </div>
-                    
-                    <!-- Listings Container -->
                     <div id="listingsContainer" class="space-y-4">
-                        <!-- Listings will be populated here -->
                         <div class="empty-listings hidden text-center py-8">
                             <i class="fas fa-home text-4xl text-gray-600 mb-3"></i>
                             <h4 class="text-xl font-medium text-gray-400">No listings yet</h4>
@@ -220,23 +217,31 @@
         let userListings = [];
 
         // Tab navigation functionality
+        console.log('[DEBUG] tabButtons:', tabButtons);
+        console.log('[DEBUG] tabContents:', tabContents);
+
+        function activateTab(tabId) {
+            console.log('[DEBUG] Activating tab:', tabId);
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`${tabId}Tab`).classList.add('active');
+            // Debug: log which tab is now active
+            tabContents.forEach(content => {
+                console.log('[DEBUG] Tab', content.id, 'active:', content.classList.contains('active'));
+            });
+        }
+
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.getAttribute('data-tab');
-                
-                // Update active tab button
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                button.classList.add('active');
-                
-                // Show the selected tab content
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(`${tabId}Tab`).classList.add('active');
+                console.log('[DEBUG] Tab button clicked:', tabId);
+                activateTab(tabId);
             });
         });
+
+        // Ao carregar a página, ativa só a tab profile
+        activateTab('profile');
 
         // Close modals
         closeButtons.forEach(button => {
